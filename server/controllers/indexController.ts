@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
+import { RequestOptions } from "https";
+import { dropDB, populateDB } from "../db/populateDB";
 
-const posts = {rating: 10, name: "shawshank redemption"};
 
 export function indexGetAll(req: Request, res: Response) {
     console.log("Received indexGetAll request");
-    res.json(posts);
 }
