@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { RequestOptions } from "https";
-import { dropDB, populateDB } from "../db/populateDB";
+import { getTopK } from "../db/queries";
 
-
-export function indexGetAll(req: Request, res: Response) {
-    console.log("Received indexGetAll request");
+export async function indexGetAll(req: Request, res: Response) {
+    const top20 = await getTopK(50);
+    res.json(top20);
 }

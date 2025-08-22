@@ -1,7 +1,6 @@
 import { Client } from "pg";
 import { fetch100 } from "../APIs/fetchInfo";
 import dotenv from "dotenv";
-import { off } from "process";
 dotenv.config();
 
 interface Movie {
@@ -28,7 +27,7 @@ async function initializeDB() {
             id integer primary key generated always as identity,
             title varchar(1000),
             img varchar(1000),
-            rating varchar(5) 
+            rating real  
         );`
 
     const client = new Client();
@@ -62,10 +61,10 @@ export async function populateDB() {
             lastUserUpdate = offset;
         }
 
-        const allVals = results.reduce((acc: string[], movie) => {
+        const allVals = results.reduce((acc: (string | number)[], movie) => {
             acc.push(movie.title);
             acc.push(movie.img);
-            acc.push(movie.rating);
+            acc.push(Number(movie.rating));
             return acc;
         }, []);
 

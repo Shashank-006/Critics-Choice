@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
-#root {
-    @apply h-[100vh] font-["Quicksand"] font-medium text-xl bg-zinc-400 text-slate-200;
+html, body, #root {
+    height: 100%;
+}
+
+body {
+    @apply font-["Quicksand"] font-medium text-xl bg-zinc-400 text-slate-200;
 }

@@ -1,23 +1,27 @@
 import Card from "./Card";
-import { useEffect } from "react";
-
-
+import { useEffect, useState } from "react";
+import type { MovieDB, MovieRanked } from "../types/movie";
 
 export default function Content() {
-    const vals: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
+    const [movieContent, setMovieContent] = useState<MovieRanked[]>([]);
+
     useEffect(() => {
         async function fetchAll() {
             const Response = await fetch("http://localhost:3000")
             const ResponseJson = await Response.json();
-            console.log(ResponseJson);
+            const movies = ResponseJson.map((movie: MovieDB, idx: number) => {
+                return {...movie, ranking: idx + 1};
+            });
+            setMovieContent(movies);
         }
         fetchAll();
     }, []);
     return (
         <div className="grid grid-cols-5 w-4/5 self-center">
-            {vals.map(val => 
-                <Card val={val} key={vals.indexOf(val)}/>
-            )}
+            {movieContent.map(movie => {
+                const { id, ...movieRest } = movie;
+                return <Card movie={movieRest} key={id}/>
+            })}
         </div>
     );
 }
