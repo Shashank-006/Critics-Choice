@@ -1,14 +1,13 @@
 import { Client } from "pg";
-import { fetch100 } from "../APIs/fetchInfo";
+import { fetch250WatchMode, fetchOMDB } from "../APIs/fetchInfo";
 import dotenv from "dotenv";
 dotenv.config();
 
 interface Movie {
     title: string
-    poster: string
-    title_type: string
-    rating: string
-    img: string
+    type: string
+    imdb_id: string
+    tmdb_id: string
     [key: string]: any
 }
 
@@ -27,7 +26,16 @@ async function initializeDB() {
             id integer primary key generated always as identity,
             title varchar(1000),
             img varchar(1000),
-            rating real  
+            imdb_id varchar(10),
+            tmdb_id varchar(10),
+            imdbRating real,
+            imdbVotes integer,
+            metascore integer,
+            runtime integer,
+            plot varchar(1000),
+            awards varchar(1000),
+            genre varchar(100),
+            year integer
         );`
 
     const client = new Client();
@@ -45,26 +53,22 @@ export async function populateDB() {
 
     await initializeDB();
 
-    let offset = 0;
-    let lastUserUpdate = 0;
+    let page = 1;
+
+    let totalResults: number;
     while(true) {
-        const vals = await fetch100(offset, "movie");
-        const results: Movie[] = vals.results;
+        const vals = await fetch250WatchMode(page, "movie");
+        const results: Movie[] = vals.titles;
+        totalResults = vals.total_results;
+        page++;
 
         if(results.length === 0)
             break;
 
-        offset += results.length;
-
-        if(offset >= 5000 + lastUserUpdate) {
-            console.log(`Seeded ${offset} so far!`);
-            lastUserUpdate = offset;
-        }
-
-        const allVals = results.reduce((acc: (string | number)[], movie) => {
+        const allVals = results.reduce((acc: string[], movie) => {
             acc.push(movie.title);
-            acc.push(movie.img);
-            acc.push(Number(movie.rating));
+            acc.push(movie.imdb_id);
+            acc.push(movie.tmdb_id);
             return acc;
         }, []);
 
@@ -72,19 +76,53 @@ export async function populateDB() {
         const placeholders = results
             .map((_, i) => `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`)
             .join(", ");
-        const insertQuery = `insert into movies (title, img, rating) values ${placeholders}`;
+        const insertQuery = `insert into movies (title, imdb_id, tmdb_id) values ${placeholders}`;
         await client.query(insertQuery, allVals);
     }
 
     await client.end();
 
-    console.log(`DB populated: ${offset} movies added!`);
+    console.log(`DB populated: ${totalResults} movies added!`);
+}
+
+async function populateOMDB(start: number, end: number) {
+    function updateValue(imdb_id: string, value: any, label: string) {
+        if(value !== "N/A"){
+            return client.query(`
+                update movies
+                set ${label}=$1
+                where imdb_id=$2`
+            , [value, imdb_id]);
+        }
+    }
+    const client = new Client();
+    await client.connect();
+    const { rows }: { rows: Movie[] } = await client.query("select * from movies where id >= $1 and id <= $2;", [start, end]);
+    const queryPromises = rows.map(async row => {
+        const details = await fetchOMDB(row.imdb_id);
+        const imdbVotesInt = details.imdbVotes
+                .split("")
+                .filter(c => c != ',')
+                .join("");
+        const runtimeInt = details.Runtime.slice(0, -4);
+        await updateValue(row.imdb_id, details.imdbRating, "imdbRating");
+        await updateValue(row.imdb_id, details.Awards, "awards");
+        await updateValue(row.imdb_id, details.Metascore, "metascore");
+        await updateValue(row.imdb_id, imdbVotesInt, "imdbVotes");
+        await updateValue(row.imdb_id, details.Plot, "plot");
+        await updateValue(row.imdb_id, details.genre, "genre");
+        await updateValue(row.imdb_id, runtimeInt, "runtime");
+    });
+    await Promise.all(queryPromises);
+    
+    await client.end();
 }
 
 async function dropAndPopulate() {
-    await dropDB();
-    await initializeDB();
-    await populateDB();
+    // await dropDB();
+    // await initializeDB();
+    // await populateDB();
+    await populateOMDB(1, 10);
 }
 
 dropAndPopulate();

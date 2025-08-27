@@ -1,14 +1,31 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-export async function fetch100(offset: number, type: string) {
-    const requestOptions: RequestInit = {
-        headers: {
-            apikey: process.env.UNOGS_KEY || ""
-        }
-    }
+interface OMDBResult {
+    imdbRating: string,
+    imdbVotes: string,
+    Metascore: string,
+    Genre: string,
+    Plot: string,
+    Runtime: string,
+    Awards: string,
+    [key: string]: any
+}
 
-    const Response = await fetch(`https://api.apilayer.com/unogs/search/titles?limit=100&offset=${offset}&type=${type}`, requestOptions);
+export async function fetch250WatchMode(page: number, type: string) {
+    const netflix = '203';
+    const url = `https://api.watchmode.com/v1/list-titles/?apiKey=${process.env.WATCHMODE_KEY || ""}&source_ids=${netflix}&types=${type}&limit=250&page=${page}`;
+
+    const Response = await fetch(url);
+    const res = await Response.json();
+    console.log(res);
+    return res;
+}
+
+export async function fetchOMDB(imdb_id: string): Promise<OMDBResult> {
+    const url = `http://www.omdbapi.com/?apikey=${process.env.OMDB_KEY || ""}&i=${imdb_id}`
+
+    const Response = await fetch(url);
     const res = await Response.json();
     return res;
 }
