@@ -149,8 +149,8 @@ async function dropAndPopulate() {
     // await populateDB();
     const count = await getCount();
     //Usage: Because of rate limiting do groups of 1000, (populateOMDB(1, 1000), populateOMDB(1001, 2000), etc) and change keys for omdb between each run
-    //await populateOMDB(1, count);
-    await populateTMDB(1486, count);
+    // await populateOMDB(1, count);
+    // await populateTMDB(1, count);
 }
 
 dropAndPopulate();
