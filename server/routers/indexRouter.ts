@@ -3,6 +3,6 @@ import { indexGetAll } from "../controllers/indexController";
 
 const router = express.Router();
 
-router.get("/", indexGetAll);
+router.get("/getMovies", indexGetAll);
 
 export default router;

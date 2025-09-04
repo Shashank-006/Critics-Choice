@@ -4,7 +4,7 @@ dotenv.config();
 
 const pool = new Pool();
 
-export async function getTopK(limit: number) {
-    const { rows } = await pool.query(`select * from movies where imdbrating is not null order by imdbrating desc limit $1`, [limit]);
+export async function getTopK(maxRuntime: number , limit: number) {
+    const { rows } = await pool.query(`select * from movies where imdbrating is not null and runtime <= $1 order by imdbrating desc limit $2`, [maxRuntime, limit]);
     return rows;
 }
