@@ -1,7 +1,6 @@
 import { Client } from "pg";
 import { fetch250WatchMode, fetchOMDB, fetchTMDB } from "../APIs/fetchInfo";
 import dotenv from "dotenv";
-import { count } from "console";
 dotenv.config();
 
 interface Movie {
