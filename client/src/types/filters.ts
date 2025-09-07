@@ -3,7 +3,7 @@ export interface Filters {
     genres: Genres;
 }
 
-interface Genres {
+export interface Genres {
     [key: string]: boolean
 }
 

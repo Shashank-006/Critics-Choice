@@ -1,9 +1,7 @@
+import { genreList } from "../constants";
 import type { Filters } from "../types/filters";
 
 export default function Sidebar({ filters, filterSetters }: {filters: Filters, filterSetters: {setRuntime: (runtime: number) => void, setGenre: (genre: string, value: boolean) => void}}) {
-    console.log(filters, filterSetters)
-    const genreList = ["Drama", "Romance", "Comedy", "Sport", "Fantasy", "Mystery", "Action", "Thriller", "Horror", "Sci-Fi", "Crime", "Adventure"];
-
     return (
         <div className="w-44 p-2 bg-zinc-500">
             Filters: 
@@ -18,7 +16,7 @@ export default function Sidebar({ filters, filterSetters }: {filters: Filters, f
             {
                 genreList.map(genre => {   
                     return (
-                    <div>
+                    <div key={genre}>
                         <label htmlFor={`genre${genre}`}>{genre}:</label>
                         <input type="checkbox" id={genre} name={genre} checked={filters.genres[genre]} onChange={(e) => filterSetters.setGenre(genre, Boolean(e.target.checked))}/>
                     </div>

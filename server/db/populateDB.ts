@@ -1,15 +1,8 @@
 import { Client } from "pg";
 import { fetch250WatchMode, fetchOMDB, fetchTMDB } from "../APIs/fetchInfo";
+import type { Movie } from "../types/movie";
 import dotenv from "dotenv";
 dotenv.config();
-
-interface Movie {
-    title: string
-    type: string
-    imdb_id: string
-    tmdb_id: string
-    [key: string]: any
-}
 
 export async function dropDB() {
     const client = new Client();
