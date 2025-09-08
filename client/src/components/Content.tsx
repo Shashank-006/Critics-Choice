@@ -1,5 +1,5 @@
 import Card from "./Card";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { MovieDB, MovieRanked } from "../types/movie";
 import type { Filters } from "../types/filters";
 

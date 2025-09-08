@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Quicksand:wght@300..700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,5 +8,5 @@ html, body, #root {
 }
 
 body {
-    @apply font-["Quicksand"] font-medium text-xl bg-zinc-400 text-slate-200;
+    @apply font-["Montserrat"] font-medium text-xl bg-zinc-400 text-slate-200;
 }

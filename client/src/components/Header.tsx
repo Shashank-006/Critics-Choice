@@ -3,7 +3,7 @@ export default function Header() {
         <header className="bg-violet-900 text-center text-7xl">
             Better Watch
             <h3 className="text-2xl">
-                Find the best movies on netflix without the clutter
+                Find the best movies on Netflix without the clutter
             </h3>
         </header>
     );
